@@ -1,0 +1,211 @@
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Библия</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f5f0;
+            color: #2c241a;
+        }
+        .toolbar {
+            position: sticky;
+            top: 0;
+            background: #3e2a1f;
+            color: white;
+            padding: 12px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            z-index: 100;
+        }
+        .toolbar input {
+            flex: 1;
+            padding: 8px;
+            border-radius: 20px;
+            border: none;
+        }
+        .toolbar button {
+            background: #b68b40;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+        .book-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px;
+            background: #ede5d8;
+        }
+        .book-btn {
+            background: #5e3a2b;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+        }
+        .content {
+            padding: 16px;
+            line-height: 1.5;
+        }
+        .chapter {
+            margin-top: 20px;
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .verse {
+            margin: 8px 0;
+            padding-left: 36px;
+            position: relative;
+        }
+        .verse-num {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 12px;
+            color: #b68b40;
+            font-weight: bold;
+        }
+        h3 {
+            color: #3e2a1f;
+            margin-top: 0;
+        }
+        .search-highlight {
+            background-color: #ffecb3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="toolbar">
+    <input type="text" id="searchInput" placeholder="Поиск по Библии...">
+    <button id="searchBtn">🔍 Искать</button>
+    <button id="clearSearch">✖ Сброс</button>
+</div>
+
+<div id="booksPanel" class="book-list">
+    <!-- Список книг появится из JavaScript -->
+</div>
+
+<div id="content" class="content">
+    <p>Выберите книгу Библии</p>
+</div>
+
+<script>
+    // МИНИ-БИБЛИЯ (первые главы для примера, но вы можете заменить на полный текст)
+    // Для реального приложения замените этот объект на полную Библию (я дам инструкцию как скачать)
+    const bibleData = {
+        "Бытие": {
+            "1": [
+                "В начале сотворил Бог небо и землю.",
+                "Земля же была безвидна и пуста, и тьма над бездною, и Дух Божий носился над водою.",
+                "И сказал Бог: да будет свет. И стал свет."
+            ],
+            "2": [
+                "Так совершены небо и земля и все воинство их.",
+                "И совершил Бог к седьмому дню дела Свои, и почил в день седьмой от всех дел Своих."
+            ]
+        },
+        "Иоанна": {
+            "1": [
+                "В начале было Слово, и Слово было у Бога, и Слово было Бог.",
+                "Оно было в начале у Бога.",
+                "Все через Него начало быть, и без Него ничто не начало быть, что начало быть."
+            ]
+        }
+    };
+
+    // Загружаем список книг
+    function loadBooks() {
+        const panel = document.getElementById("booksPanel");
+        panel.innerHTML = "";
+        for (let book in bibleData) {
+            const btn = document.createElement("button");
+            btn.textContent = book;
+            btn.className = "book-btn";
+            btn.onclick = () => showBook(book);
+            panel.appendChild(btn);
+        }
+    }
+
+    function showBook(bookName) {
+        const book = bibleData[bookName];
+        const contentDiv = document.getElementById("content");
+        contentDiv.innerHTML = `<h2>${bookName}</h2>`;
+        
+        for (let chapter in book) {
+            const chapterDiv = document.createElement("div");
+            chapterDiv.className = "chapter";
+            chapterDiv.innerHTML = `<h3>Глава ${chapter}</h3>`;
+            
+            const verses = book[chapter];
+            verses.forEach((text, idx) => {
+                const verseNum = idx + 1;
+                const verseDiv = document.createElement("div");
+                verseDiv.className = "verse";
+                verseDiv.innerHTML = `<span class="verse-num">${verseNum}</span>${text}`;
+                chapterDiv.appendChild(verseDiv);
+            });
+            contentDiv.appendChild(chapterDiv);
+        }
+        
+        // Сохраняем текущую книгу для поиска
+        window.currentBook = bookName;
+    }
+
+    function searchBible() {
+        const query = document.getElementById("searchInput").value.trim().toLowerCase();
+        if (!query) return;
+        
+        const contentDiv = document.getElementById("content");
+        contentDiv.innerHTML = `<h2>Результаты поиска: «${query}»</h2>`;
+        let found = false;
+        
+        for (let bookName in bibleData) {
+            const book = bibleData[bookName];
+            for (let chapter in book) {
+                const verses = book[chapter];
+                verses.forEach((text, idx) => {
+                    if (text.toLowerCase().includes(query)) {
+                        found = true;
+                        const resultDiv = document.createElement("div");
+                        resultDiv.className = "chapter";
+                        resultDiv.innerHTML = `
+                            <h3>${bookName} ${chapter}:${idx+1}</h3>
+                            <div class="verse">${text.replace(new RegExp(`(${query})`, 'gi'), '<span class="search-highlight">$1</span>')}</div>
+                        `;
+                        contentDiv.appendChild(resultDiv);
+                    }
+                });
+            }
+        }
+        
+        if (!found) {
+            contentDiv.innerHTML += "<p>Ничего не найдено</p>";
+        }
+    }
+    
+    function clearSearch() {
+        document.getElementById("searchInput").value = "";
+        if (window.currentBook) {
+            showBook(window.currentBook);
+        } else {
+            document.getElementById("content").innerHTML = "<p>Выберите книгу Библии</p>";
+        }
+    }
+
+    loadBooks();
+    document.getElementById("searchBtn").onclick = searchBible;
+    document.getElementById("clearSearch").onclick = clearSearch;
+</script>
+</body>
+</html>
