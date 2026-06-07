@@ -4,7 +4,7 @@
   "display": "standalone",
   "name": "kiriliva01-hash.github",
   "orientation": "any",
-  "scope": "/",
+  "scope": "https://kiriliva01-hash.github.io/Bible/",
   "short_name": "kiriliva01-hash.github",
   "start_url": "/https://kiriliva01-hash.github.io/Bible/",
   "theme_color": "#482525",
