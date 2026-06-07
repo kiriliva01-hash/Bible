@@ -1,11 +1,12 @@
 {
-  "name": "Библия",
-  "short_name": "Bible",
-  "start_url": "https://kiriliva01-hash.github.io/",
+  "background_color": "#423535",
+  "dir": "ltr",
   "display": "standalone",
-  "icons": [{
-    "src": "icon.png",
-    "sizes": "192x192",
-    "type": "image/png"
-  }]
+  "name": "kiriliva01-hash.github",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "kiriliva01-hash.github",
+  "start_url": "/https://kiriliva01-hash.github.io/Bible/",
+  "theme_color": "#482525",
+  "description": "Bible"
 }
